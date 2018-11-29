@@ -1,0 +1,22 @@
+{
+  "name": "peoplepro",
+  "version": "1.0.0",
+  "description": "Teste vaga Santa Cecília - Uol",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "peoplePRO",
+    "rest",
+    "restFull"
+  ],
+  "author": "Edivaldo Ribeiro",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "mongoose": "^5.3.14",
+    "validator": "^10.9.0"
+  }
+}
