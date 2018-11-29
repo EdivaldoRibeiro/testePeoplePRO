@@ -18,10 +18,6 @@ app.get('/users', function(req,res) {
     res.json(result);
   });
 
-  userController.cidade(function(ret) {
-      console.log("===>>>"+ret);
-  });
-
 });
 
 //http://127.0.0.1:5000/users/5bfebf969ebbee4662ea3218
@@ -61,21 +57,15 @@ app.post('/users', function(req,res) {
     'created_at' : new Date()
   });
 
-  userController.geolocalization(new_user, function(ret) {
-    new_user.latitude = ret.latitude;
-    new_user.longitude = ret.longitude;
-//    console.log("===>>>"+ret);
-
-    userController.save(ret,function(result) {
-      res.json(result);
+  userController.geolocalization(new_user, function(ret_geol) {
+    userController.cidade(ret_geol, function(ret_cidade) {
+        userController.temperatura(ret_cidade, function(ret_temp) {
+          userController.save(ret_temp,function(result) {
+            res.json(result);
+          });
+        });
     });
-
   });
-
-//  userController.save(fullname,email,password,latitude,longitude,function(ret) {
-//  userController.save(new_user,function(ret) {
-//    res.json(ret);
-//  });
 });
 
 //http://127.0.0.1:5000/users?fullname=EdivaldoRibeiro_um&email=java.betel@uol.com.br_um&password=1234&id=5bfed11cf1915c4da1ea97d1
@@ -97,8 +87,8 @@ app.put('/users', function(req,res) {
     'fullname': fullname,
     'email': email,
     'password': password,
-    'latitude': latitude,
     'longitude': longitude,
+    'latitude': latitude,
     'ip': ip,
     'city': city,
     'woeid': woeid,
@@ -107,11 +97,16 @@ app.put('/users', function(req,res) {
     'created_at' : new Date()
   });
 
-//  userController.update(id,fullname,email,password,latitude,longitude,function(ret) {
-  userController.update(id,upd_user,function(ret) {
-    res.json(ret);
+  userController.geolocalization(upd_user, function(ret_geol) {
+    userController.cidade(ret_geol, function(ret_cidade) {
+      userController.temperatura(ret_cidade, function(ret_temp) {
+        userController.save(ret_temp,function(result) {
+          res.json(result);
+        });
+      });
+    });
   });
-})
+});
 
 //http://127.0.0.1:5000/users/5bfed11cf1915c4da1ea97d1
 app.delete('/users/:id', function(req,res) {
