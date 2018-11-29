@@ -1,12 +1,52 @@
 # testePeoplePRO
 Teste de avaliação - conhecimentos em Java, Rest, RestFull, nodeJS, MongoDB, Postman
 
+Proposta do teste:
+
+    - Considere apenas a parte backend. Não é necessário desenvolver tela/formulário, apenas os endpoints REST.
+    - Um cliente é composto apenas por nome e idade 
+    - API aberta de geolocalização por IP https://www.ipvigilante.com/
+    - API aberta de clima por geolocalização https://www.metaweather.com/api/
+    - Quando executar a busca de clima por geolocalização, caso não exista a cidade especifica de origem, utilize o resultado mais próximo.
+
+    Sua tarefa é desenvolver os serviços REST abaixo:
+    
+    - Criar um Cliente
+    - Alterar um Cliente
+    - Consultar um Cliente por id
+    - Listar todos os Clientes salvos
+    - Remover Cliente por id
+
+    Ao criar um cliente, apenas para fins estatísticos e históricos, busque qual a localização geográfica de quem executou a requisição, usando o IP de origem. Com a localização geográfica, consulte qual é a temperatura máxima e mínima do dia da requisição de criação no local do IP de origem. Salve essa informação e a associe ao cliente resultado da requisição de origem.
+
+    Tenha em mente que a consulta de Cliente por ID será altamente requisitada.
+
+Protótipo realizado:
+
+    Criei no MongoDB o esquema:
+    
+    var userShema = mongoose.Schema({
+        fullname: String,           // Nome do usuário
+        email: String,              // Email do usuário
+        password: String,           // Password do usuário
+        created_at: Date,           // Data de criação
+        ip: String,                 // IP do usuário
+        latitude: String,           // Latitude (obtido em https://www.ipvigilante.com/)
+        longitude: String,          // Longitude (obtido em https://www.ipvigilante.com/)
+        woeid: String,              // Id universal (obtido em https://www.metaweather.com/api/)
+        city: String,               // Cidade próx. 1a. ocorrência (obtido em https://www.metaweather.com/api/)
+        min_temp: String,           // Temperatura mínima 1a. ocorrência (obtido em https://www.metaweather.com/api/)
+        max_temp: String            // Temperatura máxima 1a. ocorrência (obtido em https://www.metaweather.com/api/)
+      });
+
 Ambiente utilizado para desenvolvimento (Ubuntu 18.4).
 
 Softwares utilizados:
 
     MongoDB:
     ========
+    
+    MongoDB é um software de banco de dados orientado a documentos livre.
     
     edivaldo@edivaldo-AHV:~/clone/testePeoplePRO$ mongo --version
 
@@ -39,6 +79,8 @@ Softwares utilizados:
     NodeJS:
     =======
     
+    Node.js é um interpretador de código JavaScript com o código aberto, focado em migrar o Javascript do lado do cliente para servidores.
+    
     edivaldo@edivaldo-AHV:~/clone/testePeoplePRO$ node -v
     v8.11.1
 
@@ -50,6 +92,8 @@ Softwares utilizados:
     npm:
     ====
     
+    O npm é um gerenciador de pacotes para a linguagem de programação JavaScript.
+    
     edivaldo@edivaldo-AHV:~/clone/testePeoplePRO$ npm --version
     5.6.0
 
@@ -60,6 +104,8 @@ Softwares utilizados:
     
     Postman (Chrome):
     =================
+    
+    Postman is the only complete API development environment, for API developers, used by more than 5 million developers and 100000 companies worldwide.
 
     Instalação do postman no Ubuntu:
     
@@ -71,6 +117,8 @@ Softwares utilizados:
     
     nodemon:
     ========
+    
+    Just use nodemon instead of node to run your code, and now your process will automatically restart when your code changes. 
     
     Instalação do nodemon no Ubuntu:
     
@@ -130,8 +178,7 @@ Preparando o "back-end" para testes, usando "nodemon". Daemon faz reset da aplic
     db connection open to mongodb://127.0.0.1/peoplePRO2
     db connect ok!
 
-Preparando o "front-end" para testes, usando "postman". Ferramenta faz request dos testes desejados, com amplo suporte
-na comunicação rest.
+Preparando o "front-end" para testes, usando "postman". Ferramenta faz request dos testes desejados, com amplo suporte http.
 
     Abrir uma segunda janela do terminal.
     
@@ -150,12 +197,202 @@ na comunicação rest.
 
 Simulador de testes, envio de requisições rest (Postman)
 
-
-
-
+    Teste 1 - POST:
+    ===============
     
+    Envio:
+    
+    http://127.0.0.1:5000/users/?fullname=Edivaldo RIbeiro&email=java.betel@uol.com.br&password=123456&ip=/8.8.8.8/full&city=são paulo&latitude=100.10&longitude=200.20&min_temp=0.5&max_temp=25.6
+    
+    Resposta:
+    
+    {
+        "_id": "5c000975a030cd31702b3e3d",
+        "fullname": "Edivaldo RIbeiro",
+        "email": "java.betel@uol.com.br",
+        "password": "123456",
+        "latitude": "37.38600",
+        "longitude": "-122.08380",
+        "ip": "/8.8.8.8/full",
+        "city": "Mountain View",
+        "woeid": "2455920",
+        "min_temp": "10.2375",
+        "max_temp": "14.004999999999999",
+        "created_at": "2018-11-29T15:44:53.730Z",
+        "__v": 0
+    }
 
+    Teste 2 - POST:
+    ===============
+    
+    Envio:
+    
+    http://127.0.0.1:5000/users/?fullname=Antonio Florentino&email=antonio@teste.com.br&password=1234568&ip=/8.8.8.8/full&city=são paulo&latitude=100.10&longitude=200.20&min_temp=0.5&max_temp=25.6
+    
+    Resposta:
+    
+    {
+        "_id": "5c000a11a030cd31702b3e3e",
+        "fullname": "Antonio Florentino",
+        "email": "antonio@teste.com.br",
+        "password": "1234568",
+        "latitude": "37.38600",
+        "longitude": "-122.08380",
+        "ip": "/8.8.8.8/full",
+        "city": "Mountain View",
+        "woeid": "2455920",
+        "min_temp": "10.2375",
+        "max_temp": "14.004999999999999",
+        "created_at": "2018-11-29T15:47:29.793Z",
+        "__v": 0
+    }
 
+    Teste 3 - GET: (Retorno de lista)
+    ==============
+    
+    Envio:
+    
+    http://127.0.0.1:5000/users/
+    
+    Resposta:
+    
+    [
+        {
+            "_id": "5c000975a030cd31702b3e3d",
+            "fullname": "Edivaldo RIbeiro",
+            "email": "java.betel@uol.com.br",
+            "password": "123456",
+            "latitude": "37.38600",
+            "longitude": "-122.08380",
+            "ip": "/8.8.8.8/full",
+            "city": "Mountain View",
+            "woeid": "2455920",
+            "min_temp": "10.2375",
+            "max_temp": "14.004999999999999",
+            "created_at": "2018-11-29T15:44:53.730Z",
+            "__v": 0
+        },
+        {
+            "_id": "5c000a11a030cd31702b3e3e",
+            "fullname": "Antonio Florentino",
+            "email": "antonio@teste.com.br",
+            "password": "1234568",
+            "latitude": "37.38600",
+            "longitude": "-122.08380",
+            "ip": "/8.8.8.8/full",
+            "city": "Mountain View",
+            "woeid": "2455920",
+            "min_temp": "10.2375",
+            "max_temp": "14.004999999999999",
+            "created_at": "2018-11-29T15:47:29.793Z",
+            "__v": 0
+        }
+    ]
 
+    Teste 4 - GET: (Consulta do usuário Edivaldo)
+    
+    Envio:
+    
+    http://127.0.0.1:5000/users/5c000975a030cd31702b3e3d
 
+    Resposta:
 
+    {
+        "_id": "5c000975a030cd31702b3e3d",
+        "fullname": "Edivaldo RIbeiro",
+        "email": "java.betel@uol.com.br",
+        "password": "123456",
+        "latitude": "37.38600",
+        "longitude": "-122.08380",
+        "ip": "/8.8.8.8/full",
+        "city": "Mountain View",
+        "woeid": "2455920",
+        "min_temp": "10.2375",
+        "max_temp": "14.004999999999999",
+        "created_at": "2018-11-29T15:44:53.730Z",
+        "__v": 0
+    }
+
+    Teste 5 - PUT - (Alteração do usuário Edivaldo)
+    
+    Envio:
+    
+    http://127.0.0.1:5000/users?fullname=Edivaldo Ribeiro Senior&password=654321&id=5c000975a030cd31702b3e3d
+    
+    Resposta:
+    
+    {
+        "_id": "5c000d33a030cd31702b3e3f",
+        "fullname": "Edivaldo Ribeiro Senior",
+        "password": "654321",
+        "longitude": "-46.64170",
+        "latitude": "-23.57330",
+        "city": "São Paulo",
+        "woeid": "455827",
+        "min_temp": "18.19333333333333",
+        "max_temp": "27.866666666666664",
+        "created_at": "2018-11-29T16:00:51.111Z",
+        "__v": 0
+    }
+
+    Tese 6 - GET - (Consulta do Edivaldo)
+    
+    Envio:
+    
+    http://127.0.0.1:5000/users/5c000975a030cd31702b3e3d
+    
+    Resposta:
+    
+    {
+        "_id": "5c000975a030cd31702b3e3d",
+        "fullname": "Edivaldo Ribeiro Senior",
+        "email": "java.betel@uol.com.br",
+        "password": "123456",
+        "latitude": "-23.57330",
+        "longitude": "-46.64170",
+        "ip": "/8.8.8.8/full",
+        "city": "São Paulo",
+        "woeid": "455827",
+        "min_temp": "18.19333333333333",
+        "max_temp": "27.866666666666664",
+        "created_at": "2018-11-29T15:44:53.730Z",
+        "__v": 0
+    }
+    
+    Teste 7 - DELETE - (Exclusão do usuário Edivaldo)
+    
+    Envio:
+    
+    http://127.0.0.1:5000/users/5c000975a030cd31702b3e3d
+    
+    Resposta:
+    
+    {
+        "resposta": " Usuário excluído com sucesso"
+    }
+    
+    Teste 8 - GET - (Lista)
+    
+    Envio:
+    
+    http://127.0.0.1:5000/users/
+    
+    Resposta:
+    
+    [
+        {
+            "_id": "5c000a11a030cd31702b3e3e",
+            "fullname": "Antonio Florentino",
+            "email": "antonio@teste.com.br",
+            "password": "1234568",
+            "latitude": "37.38600",
+            "longitude": "-122.08380",
+            "ip": "/8.8.8.8/full",
+            "city": "Mountain View",
+            "woeid": "2455920",
+            "min_temp": "10.2375",
+            "max_temp": "14.004999999999999",
+            "created_at": "2018-11-29T15:47:29.793Z",
+            "__v": 0
+        }
+    ]
