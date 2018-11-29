@@ -11,8 +11,6 @@ mongoose.connect(mongoURI, { useNewUrlParser: true }, function(err) {
 
 var db = mongoose.connection;
 
-//db.auth( { user: "edivaldo", pwd: "edivaldo", roles: [ "readWrite", "dbAdmin" ] });
-
 // CONNECTION EVENTS
 // When successfully connected
 db.on('connected', function () {
